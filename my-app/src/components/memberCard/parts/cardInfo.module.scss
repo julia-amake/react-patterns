@@ -1,0 +1,16 @@
+.info {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  flex-direction: column;
+  gap: 10px;
+  width: 198px;
+  padding: 10px 5px;
+  border-top: 1px solid black;
+  border-radius: 0 0 10px 10px;
+  background-color: pink;
+}
+
+.item {
+  font-size: 15px;
+}

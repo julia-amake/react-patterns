@@ -1,14 +1,15 @@
-import { FC } from "react";
-import "./style.scss";
+import { memo } from 'react';
+import { User } from '../../types/user';
+import { CardInfo } from './parts/cardInfo';
+import s from './memberCard.module.scss';
 
-import { UserProps } from "./types";
-import { CardInfo } from "./parts/cardInfo";
-
-export const MemberCard: FC<UserProps> = ({ name, username, phone, website }) => {
+export const MemberCard = memo(({ name, ...rest }: User) => {
   return (
-    <div className="member-card">
-      <p className="title">{name}</p>
-      <CardInfo  username={username} phone={phone} website={website} />
+    <div className={s.card}>
+      <p className={s.title}>{name}</p>
+      <CardInfo {...rest} />
     </div>
   );
-};
+});
+
+MemberCard.displayName = 'MemberCard';

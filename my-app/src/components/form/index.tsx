@@ -1,68 +1,51 @@
-import React, { useState, FormEvent, ChangeEvent } from 'react';
-import './style.scss';
+import React, { ChangeEvent, memo, useCallback, useContext, useState } from 'react';
+import { fetchUser } from '../../api/users';
+import { TabsContext } from '../../context/tabs';
+import { UserContext } from '../../context/user';
+import { Button } from '../button';
+import { TextField } from '../textField';
+import s from './form.module.scss';
 
-interface FormProps {
-    onUserAddition: (user: any) => void; // Принимаем функцию для обновления состояния верхнего компонента
-}
-
-const Form: React.FC<FormProps> = ({ onUserAddition }) => {
-	const [username, setUsername] = useState<string>('');
-	const [phone, setPhone] = useState<string>('');
-	const [website, setWebsite] = useState<string>('');
-
-	const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setUsername(event.target.value);
-	};
-
-	const handlePhoneChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setPhone(event.target.value);
-	};
-
-	const handlewebsiteChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setWebsite(event.target.value);
-	};
-
-	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-
-		fetch('https://jsonplaceholder.typicode.com/users', {
-			method: 'POST',
-			body: JSON.stringify({
-				username,
-				phone,
-				website,
-			}),
-			headers: {
-				'Content-type': 'application/json; charset=UTF-8',
-			},
-		})
-			.then((response) => response.json())
-			.then((user) => onUserAddition(user));
-	};
-
-	return (
-		<form onSubmit={handleSubmit} className="form-container">
-			<div>
-				<label>
-					Username:
-					<input type="text" value={username} onChange={handleUsernameChange} />
-				</label>
-			</div>
-			<div>
-				<label>
-					Phone:
-					<input type="text" value={phone} onChange={handlePhoneChange} />
-				</label>
-			</div>
-			<div>
-				<label>
-					Website:
-					<input type="email" value={website} onChange={handlewebsiteChange} />
-				</label>
-			</div>
-			<button className='button' type="submit">Submit</button>
-		</form>
-	);
+export const initialFormData = {
+  username: '',
+  phone: '',
+  website: '',
 };
 
-export default Form;
+export const Form = memo(() => {
+  const [formData, setFormData] = useState(initialFormData);
+  const { username, phone, website } = formData;
+  const { tab } = useContext(TabsContext);
+  const { setUser } = useContext(UserContext);
+
+  const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handleSubmit = useCallback(() => {
+    if (!setUser) return;
+    fetchUser(formData).then((user) => setUser(user));
+  }, [formData, setUser]);
+
+  if (tab !== 'form') return null;
+
+  return (
+    <form className={s.form}>
+      <TextField name="username" label="Username" value={username} onChange={handleChange} />
+      <TextField name="phone" label="Phone" value={phone} onChange={handleChange} />
+      <TextField
+        name="website"
+        label="Website"
+        value={website}
+        onChange={handleChange}
+        type="email"
+      />
+      <Button className={s.button} onClick={handleSubmit}>
+        submit
+      </Button>
+    </form>
+  );
+});
+
+Form.displayName = 'Form';

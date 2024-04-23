@@ -1,11 +1,24 @@
-import { Button } from "../button";
+import { memo, useContext } from 'react';
+import { TABS } from '../../consts/tabs';
+import { TabsContext } from '../../context/tabs';
+import { Tab } from '../../types/tabs';
+import { Button } from '../button';
+import s from './tabs.module.scss';
 
-export const Tabs = ({ onChange }: { onChange: (tab: boolean) => void }) => {
+export const Tabs = memo(() => {
+  const { setTab } = useContext(TabsContext);
 
-	return (
-		<div style={{ width: '100%', display: 'flex', gap: '15px', justifyContent: 'center', marginBottom: '20px' }}>
-			<Button onClick={() => onChange(false)}>form</Button>
-			<Button onClick={() => onChange(true)}>users</Button>
-		</div>
-	);
-};
+  const handleClick = (tab: Tab) => () => setTab?.(tab);
+
+  return (
+    <div className={s.tabs}>
+      {TABS.map((tab) => (
+        <Button onClick={handleClick(tab)} key={tab}>
+          {tab}
+        </Button>
+      ))}
+    </div>
+  );
+});
+
+Tabs.displayName = 'Tabs';

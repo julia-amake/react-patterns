@@ -1,0 +1,18 @@
+.buttonWithLabel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.text {
+  margin-right: 5px;
+}
+
+.button {
+  padding: 10px;
+  background-color: antiquewhite;
+  border-radius: 5px;
+  cursor: pointer;
+}
